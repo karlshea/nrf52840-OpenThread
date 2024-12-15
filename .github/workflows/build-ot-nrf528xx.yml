@@ -1,4 +1,4 @@
-name: Build OpenThread nRF52840 Example
+name: Build OpenThread nRF52840 Examples
 
 on:
   push:
@@ -39,22 +39,38 @@ jobs:
       working-directory: ot-nrf528xx
       run: ./script/bootstrap
 
-    # Step 4: Build the example
+    # Step 4: Build UART version
     - name: Build nRF52840 UART Example
       working-directory: ot-nrf528xx
       run: ./script/build nrf52840 UART_trans
 
-    # Step 5: Convert ELF to HEX
-    - name: Convert ELF to HEX
+    # Step 5: Rename UART ELF and HEX files
+    - name: Rename UART binaries
       working-directory: ot-nrf528xx
-      run: arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd build/bin/ot-cli-ftd.hex
+      run: |
+        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-UART
+        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-UART build/bin/ot-cli-ftd-UART.hex
 
-    # Step 6: Upload artifacts
+    # Step 6: Build USB version
+    - name: Build nRF52840 USB Example
+      working-directory: ot-nrf528xx
+      run: ./script/build nrf52840 USB_trans -DOT_BOOTLOADER=USB
+
+    # Step 7: Rename USB ELF and HEX files
+    - name: Rename USB binaries
+      working-directory: ot-nrf528xx
+      run: |
+        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
+        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex
+
+    # Step 8: Upload artifacts
     - name: Upload binaries
       uses: actions/upload-artifact@v3
       with:
         name: ot-nrf528xx-binaries
         path: |
-          ot-nrf528xx/build/bin/ot-cli-ftd
-          ot-nrf528xx/build/bin/ot-cli-ftd.hex
+          ot-nrf528xx/build/bin/ot-cli-ftd-UART
+          ot-nrf528xx/build/bin/ot-cli-ftd-UART.hex
+          ot-nrf528xx/build/bin/ot-cli-ftd-USB
+          ot-nrf528xx/build/bin/ot-cli-ftd-USB.hex
 
