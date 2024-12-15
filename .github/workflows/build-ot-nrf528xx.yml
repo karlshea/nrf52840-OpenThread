@@ -1,0 +1,60 @@
+name: Build OpenThread nRF52840 Example
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build OpenThread nRF52840
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    # Step 2: Set up dependencies
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-arm-none-eabi \
+          make \
+          cmake \
+          git \
+          libstdc++-arm-none-eabi-newlib \
+          python3-pip
+        pip3 install --upgrade pip
+        pip3 install nrfutil
+
+    # Step 3: Bootstrap the project
+    - name: Bootstrap the project
+      working-directory: ot-nrf528xx
+      run: ./script/bootstrap
+
+    # Step 4: Build the example
+    - name: Build nRF52840 UART Example
+      working-directory: ot-nrf528xx
+      run: ./script/build nrf52840 UART_trans
+
+    # Step 5: Convert ELF to HEX
+    - name: Convert ELF to HEX
+      working-directory: ot-nrf528xx
+      run: arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd build/bin/ot-cli-ftd.hex
+
+    # Step 6: Upload artifacts
+    - name: Upload binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: ot-nrf528xx-binaries
+        path: |
+          ot-nrf528xx/build/bin/ot-cli-ftd
+          ot-nrf528xx/build/bin/ot-cli-ftd.hex
+
