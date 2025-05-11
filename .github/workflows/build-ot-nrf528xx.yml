@@ -41,16 +41,16 @@ jobs:
       run: ./script/bootstrap
 
     # Step 6: Build USB version
-    - name: Build nRF52840 RCP USB Firmware
+    - name: Build nRF52840 USB Example
       working-directory: ot-nrf528xx
-      run: ./script/build nrf52840 rcp -DOT_BOOTLOADER=USB -DOT_RCP_USB=ON
+      run: ./script/build nrf52840 USB_trans -DOT_BOOTLOADER=USB
 
     # Step 7: Rename USB ELF and HEX files
     - name: Rename USB binaries
       working-directory: ot-nrf528xx
       run: |
-        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
-        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex
+        mv build/bin/ot-rcp build/bin/ot-rcp-USB
+        arm-none-eabi-objcopy -O ihex build/bin/ot-rcp-USB build/bin/ot-rcp-USB.hex
 
     # Step 8: Upload artifacts
     - name: Upload binaries
@@ -58,6 +58,6 @@ jobs:
       with:
         name: ot-nrf528xx-binaries
         path: |
-          ot-nrf528xx/build/bin/ot-cli-ftd-USB
-          ot-nrf528xx/build/bin/ot-cli-ftd-USB.hex
+          ot-nrf528xx/build/bin/ot-rcp-USB
+          ot-nrf528xx/build/bin/ot-rcp-USB.hex
 
