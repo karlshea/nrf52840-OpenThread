@@ -41,9 +41,9 @@ jobs:
       run: ./script/bootstrap
 
     # Step 4: Build UART version
-    - name: Build nRF52840 UART Example
+    - name: Build nRF52840 UART Example (with USB bootloader)
       working-directory: ot-nrf528xx
-      run: ./script/build nrf52840 UART_trans
+      run: ./script/build nrf52840 UART_trans -DOT_BOOTLOADER=USB
 
     # Step 5: Rename UART ELF and HEX files
     - name: Rename UART binaries
