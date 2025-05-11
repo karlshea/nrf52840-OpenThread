@@ -40,18 +40,6 @@ jobs:
       working-directory: ot-nrf528xx
       run: ./script/bootstrap
 
-    # Step 4: Build UART version
-    - name: Build nRF52840 UART Example (with USB bootloader)
-      working-directory: ot-nrf528xx
-      run: ./script/build nrf52840 UART_trans -DOT_BOOTLOADER=USB
-
-    # Step 5: Rename UART ELF and HEX files
-    - name: Rename UART binaries
-      working-directory: ot-nrf528xx
-      run: |
-        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-UART
-        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-UART build/bin/ot-cli-ftd-UART.hex
-
     # Step 6: Build USB version
     - name: Build nRF52840 RCP USB Firmware
       working-directory: ot-nrf528xx
@@ -70,8 +58,6 @@ jobs:
       with:
         name: ot-nrf528xx-binaries
         path: |
-          ot-nrf528xx/build/bin/ot-cli-ftd-UART
-          ot-nrf528xx/build/bin/ot-cli-ftd-UART.hex
           ot-nrf528xx/build/bin/ot-cli-ftd-USB
           ot-nrf528xx/build/bin/ot-cli-ftd-USB.hex
 
